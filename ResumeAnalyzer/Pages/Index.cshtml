@@ -1,0 +1,935 @@
+@page
+@model IndexModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ResumeAI | Smart Resume Analyzer</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    <style>
+            :root {
+                --primary: #635bdb;
+                --primary-dark: #5047c7;
+                --primary-light: #eeedff;
+                --background: #f6f7fb;
+                --white: #ffffff;
+                --text: #20243a;
+                --muted: #81879c;
+                --border: #e8eaf2;
+                --green: #159b73;
+                --red: #e45c69;
+                --orange: #e6a23c;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: var(--background);
+                color: var(--text);
+            }
+
+            /* Top Navigation */
+
+            .topbar {
+                height: 76px;
+                background: var(--white);
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 5%;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 22px;
+                font-weight: 800;
+                letter-spacing: -0.7px;
+            }
+
+            .brand-icon {
+                width: 42px;
+                height: 42px;
+                background: var(--primary);
+                color: white;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                font-size: 21px;
+            }
+
+            .brand span {
+                color: var(--primary);
+            }
+
+            .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 22px;
+                color: var(--muted);
+                font-size: 14px;
+            }
+
+            .nav-badge {
+                background: var(--primary-light);
+                color: var(--primary);
+                padding: 8px 14px;
+                border-radius: 20px;
+                font-weight: 600;
+            }
+
+            /* Main Layout */
+
+            .container {
+                max-width: 1250px;
+                margin: auto;
+                padding: 38px 25px 60px;
+            }
+
+            .hero {
+                margin-bottom: 32px;
+            }
+
+            .hero-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: var(--primary);
+                background: var(--primary-light);
+                padding: 7px 13px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+                letter-spacing: -1px;
+                margin-bottom: 9px;
+            }
+
+            .hero p {
+                color: var(--muted);
+                font-size: 15px;
+            }
+
+            /* Dashboard Grid */
+
+            .dashboard {
+                display: grid;
+                grid-template-columns: 390px 1fr;
+                gap: 25px;
+                align-items: start;
+            }
+
+            .card {
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: 17px;
+                padding: 25px;
+                box-shadow: 0 5px 20px rgba(30, 35, 80, 0.035);
+                margin-bottom: 22px;
+            }
+
+            .card-title {
+                font-size: 18px;
+                font-weight: 750;
+                margin-bottom: 7px;
+            }
+
+            .card-subtitle {
+                color: var(--muted);
+                font-size: 13px;
+                margin-bottom: 23px;
+            }
+
+            /* Upload Form */
+
+            .upload-area {
+                border: 2px dashed #cbc9f5;
+                background: #fafaff;
+                border-radius: 13px;
+                padding: 28px 15px;
+                text-align: center;
+                transition: .25s;
+                cursor: pointer;
+            }
+
+                .upload-area:hover {
+                    border-color: var(--primary);
+                    background: #f3f2ff;
+                }
+
+            .upload-icon {
+                width: 55px;
+                height: 55px;
+                background: var(--primary-light);
+                color: var(--primary);
+                display: grid;
+                place-items: center;
+                border-radius: 15px;
+                font-size: 25px;
+                margin: 0 auto 13px;
+            }
+
+            .upload-area h3 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .upload-area p {
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            .upload-area input {
+                display: none;
+            }
+
+            .file-name {
+                display: block;
+                margin-top: 12px;
+                font-size: 12px;
+                color: var(--primary);
+                font-weight: 600;
+                overflow-wrap: anywhere;
+            }
+
+            .field-label {
+                display: block;
+                font-size: 13px;
+                font-weight: 700;
+                margin: 23px 0 9px;
+            }
+
+            textarea {
+                width: 100%;
+                min-height: 145px;
+                padding: 13px;
+                border: 1px solid var(--border);
+                border-radius: 11px;
+                font-family: inherit;
+                font-size: 13px;
+                resize: vertical;
+                background: #fcfcfe;
+                color: var(--text);
+                outline: none;
+                transition: .2s;
+            }
+
+                textarea:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(99, 91, 219, .10);
+                }
+
+            .primary-btn {
+                width: 100%;
+                margin-top: 22px;
+                padding: 15px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 11px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: .25s;
+            }
+
+                .primary-btn:hover {
+                    background: var(--primary-dark);
+                    transform: translateY(-2px);
+                    box-shadow: 0 7px 18px rgba(99, 91, 219, .23);
+                }
+
+                .primary-btn:disabled {
+                    opacity: .65;
+                    cursor: wait;
+                    transform: none;
+                }
+
+            .error {
+                margin-top: 15px;
+                padding: 12px;
+                border-radius: 9px;
+                background: #fff0f1;
+                color: #c33b4c;
+                font-size: 13px;
+            }
+
+            /* Empty State */
+
+            .empty-card {
+                min-height: 430px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 35px;
+            }
+
+            .empty-icon {
+                width: 105px;
+                height: 105px;
+                display: grid;
+                place-items: center;
+                border-radius: 30px;
+                background: linear-gradient(135deg, #eeedff, #e2e0ff);
+                color: var(--primary);
+                font-size: 43px;
+                margin-bottom: 25px;
+            }
+
+            .empty-card h2 {
+                font-size: 23px;
+                margin-bottom: 12px;
+            }
+
+            .empty-card p {
+                max-width: 410px;
+                color: var(--muted);
+                font-size: 14px;
+                line-height: 1.8;
+            }
+
+            .steps {
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+                flex-wrap: wrap;
+                margin-top: 35px;
+            }
+
+            .step {
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+                .step i {
+                    color: var(--primary);
+                    font-size: 17px;
+                    margin-right: 5px;
+                }
+
+            /* Results */
+
+            .score-section {
+                display: flex;
+                align-items: center;
+                gap: 35px;
+                flex-wrap: wrap;
+            }
+
+            .score-ring {
+                --score-color: var(--green);
+                width: 155px;
+                height: 155px;
+                flex-shrink: 0;
+                border-radius: 50%;
+                background: conic-gradient( var(--score-color) calc(var(--score) * 1%), #eeeeF5 0 );
+                display: grid;
+                place-items: center;
+                position: relative;
+            }
+
+                .score-ring.mid {
+                    --score-color: var(--orange);
+                }
+
+                .score-ring.low {
+                    --score-color: var(--red);
+                }
+
+            .score-inner {
+                width: 123px;
+                height: 123px;
+                border-radius: 50%;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            .score-number {
+                font-size: 37px;
+                font-weight: 800;
+                letter-spacing: -2px;
+            }
+
+            .score-label {
+                color: var(--muted);
+                font-size: 11px;
+            }
+
+            .score-info {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .verdict {
+                font-size: 24px;
+                font-weight: 800;
+                margin-bottom: 8px;
+            }
+
+            .score-info p {
+                color: var(--muted);
+                font-size: 13px;
+                margin-bottom: 18px;
+            }
+
+            .progress-item {
+                margin-top: 15px;
+            }
+
+            .progress-head {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                font-weight: 650;
+                margin-bottom: 7px;
+            }
+
+            .progress-track {
+                height: 8px;
+                border-radius: 10px;
+                background: #eeeef5;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--primary);
+                border-radius: 10px;
+            }
+
+            /* Facts */
+
+            .facts {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin-top: 27px;
+                padding-top: 22px;
+                border-top: 1px solid var(--border);
+            }
+
+            .fact {
+                background: #f8f8fc;
+                padding: 15px;
+                border-radius: 11px;
+                min-width: 0;
+            }
+
+                .fact span {
+                    display: block;
+                    color: var(--muted);
+                    font-size: 11px;
+                    margin-bottom: 7px;
+                }
+
+                .fact strong {
+                    font-size: 13px;
+                    overflow-wrap: anywhere;
+                }
+
+            /* Skill Tags */
+
+            .skill-tag {
+                display: inline-block;
+                padding: 8px 12px;
+                margin: 5px 5px 5px 0;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+                .skill-tag.ok {
+                    color: #11805e;
+                    background: #e5f7f0;
+                }
+
+                .skill-tag.no {
+                    color: #d14c5a;
+                    background: #fff0f1;
+                }
+
+            .section-heading {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                margin-bottom: 17px;
+                font-size: 16px;
+                font-weight: 750;
+            }
+
+                .section-heading i {
+                    color: var(--primary);
+                    font-size: 19px;
+                }
+
+            .skill-block + .skill-block {
+                margin-top: 25px;
+            }
+
+            ul.tips {
+                padding-left: 21px;
+                color: #51576b;
+                font-size: 13px;
+                line-height: 1.8;
+            }
+
+                ul.tips li {
+                    padding-left: 4px;
+                    margin-bottom: 9px;
+                }
+
+            /* Footer */
+
+            footer {
+                text-align: center;
+                padding: 25px;
+                border-top: 1px solid var(--border);
+                background: white;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            /* Responsive */
+
+            @@media (max-width: 850px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                }
+
+                .topbar {
+                    padding: 0 20px;
+                }
+
+                .container {
+                    padding: 25px 17px;
+                }
+            }
+
+            @@media (max-width: 550px) {
+                .hero h1 {
+                    font-size: 27px;
+                }
+
+                .nav-right {
+                    gap: 8px;
+                }
+
+                .nav-badge {
+                    font-size: 11px;
+                    padding: 7px 9px;
+                }
+
+                .facts {
+                    grid-template-columns: 1fr;
+                }
+
+                .score-section {
+                    justify-content: center;
+                    text-align: center;
+                }
+
+                .score-info {
+                    width: 100%;
+                }
+
+                .card {
+                    padding: 19px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="bi bi-stars"></i>
+            </div>
+            Resume<span>AI</span>
+        </div>
+
+        <div class="nav-right">
+            <span><i class="bi bi-shield-check"></i> Smart Analysis</span>
+            <span class="nav-badge">AI Powered</span>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-tag">
+                <i class="bi bi-stars"></i>
+                INTELLIGENT RESUME ANALYSIS
+            </div>
+
+            <h1>Build a Resume That Gets Noticed.</h1>
+
+            <p>
+                Analyze your resume, discover skill gaps and improve your chances
+                of getting shortlisted.
+            </p>
+        </section>
+
+        <div class="dashboard">
+
+            <!-- LEFT: UPLOAD FORM -->
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="card"
+                  id="analyze-form">
+
+                <h2 class="card-title">Analyze Your Resume</h2>
+
+                <p class="card-subtitle">
+                    Upload your resume and let AI evaluate your profile.
+                </p>
+
+                <label class="field-label" for="Resume">
+                    <i class="bi bi-file-earmark-person"></i>
+                    Upload Resume
+                </label>
+
+                <label for="Resume" class="upload-area">
+                    <div class="upload-icon">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                    </div>
+
+                    <h3>Click to upload your resume</h3>
+
+                    <p>Supported formats: DOCX and TXT</p>
+
+                    <span class="file-name" id="file-name">
+                        Maximum supported format: .docx, .txt
+                    </span>
+
+                    <input type="file"
+                           asp-for="Resume"
+                           id="Resume"
+                           accept=".docx,.txt"
+                           required />
+                </label>
+
+                <label class="field-label" for="JobDescription">
+                    <i class="bi bi-briefcase"></i>
+                    Target Job Description
+                </label>
+
+                <p class="card-subtitle" style="margin-bottom:10px">
+                    Paste the job description to get a more relevant match score.
+                </p>
+
+                <textarea asp-for="JobDescription"
+                          id="JobDescription"
+                          placeholder="Paste job requirements, skills and responsibilities here..."></textarea>
+
+                <button type="submit"
+                        class="primary-btn"
+                        id="analyze-btn">
+
+                    <i class="bi bi-stars"></i>
+                    Analyze My Resume
+                </button>
+
+                @if (Model.Error != null)
+                {
+                    <div class="error" role="alert">
+                        <i class="bi bi-exclamation-circle"></i>
+                        @Model.Error
+                    </div>
+                }
+
+            </form>
+
+            <!-- RIGHT: RESULTS -->
+            <section>
+
+                @if (Model.Result is { } r)
+                {
+                    var tone = r.Score >= 75 ? "good" :
+                               r.Score >= 50 ? "mid" : "low";
+
+                    var verdict = r.Score >= 75 ? "Strong Match" :
+                                  r.Score >= 50 ? "Partial Match" :
+                                  "Needs Improvement";
+
+                    <div class="card">
+
+                        <div class="section-heading">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            Resume Analysis Overview
+                        </div>
+
+                        <div class="score-section">
+
+                            <div class="score-ring @(tone == "good" ? "" : tone)"
+                                 style="--score:@r.Score"
+                                 role="img"
+                                 aria-label="Score @r.Score out of 100">
+
+                                <div class="score-inner">
+                                    <div class="score-number">@r.Score</div>
+                                    <div class="score-label">OUT OF 100</div>
+                                </div>
+
+                            </div>
+
+                            <div class="score-info">
+
+                                <div class="verdict">@verdict</div>
+
+                                <p>
+                                    Here is how your resume performs based
+                                    on the analysis.
+                                </p>
+
+                                <div class="progress-item">
+
+                                    <div class="progress-head">
+                                        <span>Skill Match</span>
+                                        <span>@r.SkillScore%</span>
+                                    </div>
+
+                                    <div class="progress-track">
+                                        <div class="progress-fill"
+                                             style="width:@r.SkillScore%">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="progress-item">
+
+                                    <div class="progress-head">
+                                        <span>Resume Structure</span>
+                                        <span>@r.StructureScore%</span>
+                                    </div>
+
+                                    <div class="progress-track">
+                                        <div class="progress-fill"
+                                             style="width:@r.StructureScore%">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="facts">
+
+                            <div class="fact">
+                                <span><i class="bi bi-envelope"></i> Email</span>
+                                <strong>
+                                    @(string.IsNullOrEmpty(r.Email)
+                                        ? "Not found" : r.Email)
+                                </strong>
+                            </div>
+
+                            <div class="fact">
+                                <span><i class="bi bi-telephone"></i> Phone</span>
+                                <strong>
+                                    @(string.IsNullOrEmpty(r.Phone)
+                                        ? "Not found" : r.Phone)
+                                </strong>
+                            </div>
+
+                            <div class="fact">
+                                <span><i class="bi bi-file-text"></i> Resume Length</span>
+                                <strong>@r.WordCount Words</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SKILLS -->
+                    <div class="card">
+
+                        <div class="skill-block">
+
+                            <div class="section-heading">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Skills Identified
+                                (@r.FoundSkills.Count)
+                            </div>
+
+                            @foreach (var s in r.FoundSkills)
+                            {
+                                <span class="skill-tag ok">
+                                    <i class="bi bi-check2"></i> @s
+                                </span>
+                            }
+
+                            @if (r.FoundSkills.Count == 0)
+                            {
+                                <p class="card-subtitle">
+                                    No matching skills detected.
+                                </p>
+                            }
+
+                        </div>
+
+                        <div class="skill-block">
+
+                            <div class="section-heading">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                Missing Skills
+                                (@r.MissingSkills.Count)
+                            </div>
+
+                            @foreach (var s in r.MissingSkills)
+                            {
+                                <span class="skill-tag no">
+                                    <i class="bi bi-plus"></i> @s
+                                </span>
+                            }
+
+                            @if (r.MissingSkills.Count == 0)
+                            {
+                                <p class="card-subtitle">
+                                    You covered every skill we checked.
+                                </p>
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <!-- SUGGESTIONS -->
+                    <div class="card">
+
+                        <div class="section-heading">
+                            <i class="bi bi-lightbulb-fill"></i>
+                            Recommendations for Improvement
+                        </div>
+
+                        @if (r.Suggestions.Count == 0)
+                        {
+                            <p class="card-subtitle">
+                                No major issues found. Your resume covers
+                                every section we check.
+                            </p>
+                        }
+                        else
+                        {
+                            <ul class="tips">
+                                @foreach (var t in r.Suggestions)
+                                {
+                                    <li>@t</li>
+                                }
+                            </ul>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <!-- INITIAL EMPTY STATE -->
+                    <div class="card empty-card">
+
+                        <div class="empty-icon">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                        </div>
+
+                        <h2>Your Career Journey Starts Here</h2>
+
+                        <p>
+                            Upload your resume to receive an intelligent
+                            analysis of your skills, resume structure and
+                            job compatibility.
+                        </p>
+
+                        <div class="steps">
+
+                            <div class="step">
+                                <i class="bi bi-cloud-upload"></i>
+                                Upload Resume
+                            </div>
+
+                            <div class="step">
+                                <i class="bi bi-cpu"></i>
+                                AI Analysis
+                            </div>
+
+                            <div class="step">
+                                <i class="bi bi-graph-up"></i>
+                                Get Insights
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>
+            © 2026 ResumeAI · Intelligent Resume Analysis Platform
+        </p>
+    </footer>
+
+    <script>
+
+            // Display selected file name
+            const fileInput = document.getElementById("Resume");
+            const fileName = document.getElementById("file-name");
+
+            fileInput.addEventListener("change", function () {
+
+                if (this.files.length > 0) {
+                    fileName.textContent = "✓ " + this.files[0].name;
+                }
+                else {
+                    fileName.textContent = "Maximum supported format: .docx, .txt";
+                }
+
+            });
+
+            // Loading animation on form submission
+            document.getElementById("analyze-form")
+                .addEventListener("submit", function () {
+
+                    const button = document.getElementById("analyze-btn");
+
+                    button.disabled = true;
+
+                    button.innerHTML =
+                        '<i class="bi bi-arrow-repeat"></i> Analyzing Resume...';
+
+                });
+
+    </script>
+
+</body>
+</html>
